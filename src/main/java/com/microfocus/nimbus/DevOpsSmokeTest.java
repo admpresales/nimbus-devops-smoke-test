@@ -1,7 +1,21 @@
+package com.microfocus.nimbus;
+
 import java.io.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
+
+/**
+ * @author Crunchify
+ *
+ */
+
 
 public class DevOpsSmokeTest{
-    public static void main(String[] args) {
+    @Test
+    public void testingCrunchifyAddition() {
         String s = null;
         String dockerCommand[] = new String[4];
         dockerCommand[0] = "nimbusapp devops:1.1.7.0 -s DEVOPS_TAG=latest up";
@@ -13,7 +27,7 @@ public class DevOpsSmokeTest{
         BufferedReader stdInput;
         BufferedReader stdError;
 
-        for(int i = 0; i< dockerCommand.length; i++) {
+        for (int i = 0; i < dockerCommand.length; i++) {
             try {
                 System.out.println(dockerCommand[i]);
                 p = Runtime.getRuntime().exec(dockerCommand[i]);
@@ -33,7 +47,7 @@ public class DevOpsSmokeTest{
 
             } catch (IOException e) {
                 e.printStackTrace();
-                System.exit(-1);
+                fail();
             }
         }
     }
