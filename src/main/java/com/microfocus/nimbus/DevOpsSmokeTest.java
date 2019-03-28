@@ -102,6 +102,7 @@ public class DevOpsSmokeTest{
             obj = new JSONObject(toString(httpclient, httpost));
             buildStatus = obj.getString("status");
 
+            System.out.println("Build Status: " + buildStatus);
 
             while (buildStatus == "IN_PROGRESS") {
                 TimeUnit.SECONDS.sleep(30);
