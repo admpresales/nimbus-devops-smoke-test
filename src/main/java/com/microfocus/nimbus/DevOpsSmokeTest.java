@@ -5,6 +5,7 @@ import org.apache.http.auth.*;
 import org.apache.http.client.*;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.*;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -111,6 +112,7 @@ public class DevOpsSmokeTest{
                 buildStatus = obj.getString("status");
             }
 
+            Assert.assertEquals("SUCCESS", buildStatus);
 
         } catch(Exception e) {
             e.printStackTrace();
