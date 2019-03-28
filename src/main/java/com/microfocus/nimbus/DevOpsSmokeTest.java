@@ -9,12 +9,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 import static org.junit.Assert.fail;
@@ -70,7 +67,7 @@ public class DevOpsSmokeTest{
     @Test
     public void AOSWebRootSmokeTest() {
         try {
-            HttpClient client = HttpClientBuilder.create().build();
+            HttpClient httpclient = HttpClientBuilder.create().build();
             URL jenkinsUrl = new URL("http://nimbusserver.aos.com:8090/");
             URL jobUrl = new URL(jenkinsUrl + "job/AOS_Web_Root_Module_Pipeline/");
             HttpGet httpGet;
@@ -120,7 +117,7 @@ public class DevOpsSmokeTest{
 
     public void DAAOSWebRootPipelineTest() {
         try {
-            HttpClient client = HttpClientBuilder.create().build();
+            HttpClient httpclient = HttpClientBuilder.create().build();
             URL jenkinsUrl = new URL("http://nimbusserver.aos.com:8090/");
             URL jobUrl = new URL(jenkinsUrl + "job/aos-web-da-root-dev-pipeline/");
             HttpGet httpGet;
@@ -174,7 +171,7 @@ public class DevOpsSmokeTest{
         public String crumbRequestField;
     }
 
-    private static String toString(DefaultHttpClient client,
+    private static String toString(HttpClient client,
                                    HttpRequestBase request) throws Exception {
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
         String responseBody = client.execute(request, responseHandler);
@@ -182,7 +179,8 @@ public class DevOpsSmokeTest{
     }
 
     private static CrumbJson getCrumb(URL url) throws Exception {
-        HttpGet httpGet = new HttpGet(url. + "crumbIssuer/api/json");
+        HttpClient httpclient = HttpClientBuilder.create().build();
+        HttpGet httpGet = new HttpGet(url + "crumbIssuer/api/json");
         String crumbResponse = toString(httpclient, httpGet);
         CrumbJson crumbJson = new Gson().fromJson(crumbResponse, CrumbJson.class);
         return crumbJson;
