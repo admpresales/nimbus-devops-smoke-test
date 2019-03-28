@@ -78,13 +78,13 @@ public class DevOpsSmokeTest{
             String crumbResponse = toString(httpclient, httpGet);
             CrumbJson crumbJson = new Gson().fromJson(crumbResponse, CrumbJson.class);
 
-            url = new URL (jenkinsUrl + "build");
+            url = new URL (jobUrl + "build");
 
             httpost = new HttpPost(url.toString());
             httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
             toString(httpclient, httpost);
 
-            url = new URL (jenkinsUrl + "lastBuild/api/json");
+            url = new URL (jobUrl + "lastBuild/api/json");
 
             httpost = new HttpPost(url.toString());
             httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
