@@ -104,7 +104,7 @@ public class DevOpsSmokeTest{
 
             System.out.println("Build Status: " + buildStatus);
 
-            while (buildStatus == "IN_PROGRESS") {
+            while (buildStatus.equals("IN_PROGRESS")) {
                 TimeUnit.SECONDS.sleep(30);
                 System.out.println("Pipeline is still running.");
             }
