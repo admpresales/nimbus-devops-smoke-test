@@ -17,9 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import static org.junit.Assert.fail;
-
 import java.util.concurrent.TimeUnit;
-
 import org.json.*;
 
 
@@ -33,7 +31,7 @@ public class DevOpsSmokeTest{
 //    @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         String s = null;
-        String dockerCommand[] = new String[4];
+        String[] dockerCommand = new String[4];
         dockerCommand[0] = "nimbusapp devops:1.1.7.0 -s DEVOPS_TAG=latest up";
         dockerCommand[1] = "nimbusapp intellij:1.1.7.0 -s INTELLIJ_TAG=1.1.7.1 up";
         dockerCommand[2] = "nimbusapp octane:12.60.35.186 up";
@@ -74,10 +72,12 @@ public class DevOpsSmokeTest{
             DefaultHttpClient httpclient = new DefaultHttpClient();
             String jenkinsUrl = "http://nimbusserver.aos.com:8090/";
             String jobUrl = jenkinsUrl + "job/AOS_Web_Root_Module_Pipeline/";
-
             HttpGet httpGet;
             URL url;
             HttpPost httpost;
+            JSONObject obj;
+            String buildStatus = "IN_PROGRESS";
+
             httpGet = new HttpGet(jenkinsUrl + "crumbIssuer/api/json");
             String crumbResponse = toString(httpclient, httpGet);
             CrumbJson crumbJson = new Gson().fromJson(crumbResponse, CrumbJson.class);
@@ -92,10 +92,22 @@ public class DevOpsSmokeTest{
             url = new URL (jobUrl + "lastBuild/api/json");
             httpost = new HttpPost(url.toString());
             httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
-            toString(httpclient, httpost);
+            obj = new JSONObject(toString(httpclient, httpost));
+            String buildNumber = Integer.toString(obj.getInt("number"));
 
-            JSONObject obj = new JSONObject(toString(httpclient, httpost));
-            System.out.println(Integer.toString(obj.getInt("number")));
+            url = new URL (jobUrl + buildNumber + "/wfapi");
+            httpost = new HttpPost(url.toString());
+            httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
+            obj = new JSONObject(toString(httpclient, httpost));
+            buildStatus = obj.getString("status");
+
+
+            while (buildStatus == "IN_PROGRESS") {
+                TimeUnit.SECONDS.sleep(30);
+                System.out.println("Pipeline is still running.");
+            }
+
+
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -112,7 +124,6 @@ public class DevOpsSmokeTest{
                                    HttpRequestBase request) throws Exception {
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
         String responseBody = client.execute(request, responseHandler);
-        System.out.println(responseBody + "\n");
         return responseBody;
     }
 }
