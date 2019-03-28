@@ -84,7 +84,7 @@ public class DevOpsSmokeTest{
             httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
             toString(httpclient, httpost);
 
-            url = new URL (jobUrl + "lastBuild/api/json");
+            url = new URL (jobUrl + "currentBuild/api/json");
 
             httpost = new HttpPost(url.toString());
             httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
