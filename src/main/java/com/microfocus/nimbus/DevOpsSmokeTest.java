@@ -107,6 +107,8 @@ public class DevOpsSmokeTest{
             while (buildStatus.equals("IN_PROGRESS")) {
                 TimeUnit.SECONDS.sleep(30);
                 System.out.println("Pipeline is still running.");
+                obj = new JSONObject(toString(httpclient, httpost));
+                buildStatus = obj.getString("status");
             }
 
 
