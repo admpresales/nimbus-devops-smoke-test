@@ -20,6 +20,8 @@ import static org.junit.Assert.fail;
 
 import java.util.concurrent.TimeUnit;
 
+import org.json.*;
+
 
 /**
  * @author Crunchify
@@ -81,7 +83,6 @@ public class DevOpsSmokeTest{
             CrumbJson crumbJson = new Gson().fromJson(crumbResponse, CrumbJson.class);
 
             url = new URL (jobUrl + "build?delay=0sec");
-
             httpost = new HttpPost(url.toString());
             httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
             toString(httpclient, httpost);
@@ -89,12 +90,14 @@ public class DevOpsSmokeTest{
             TimeUnit.SECONDS.sleep(5);
 
             url = new URL (jobUrl + "lastBuild/api/json");
-
             httpost = new HttpPost(url.toString());
             httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
             toString(httpclient, httpost);
 
 
+
+            JSONObject obj = new JSONObject(toString(httpclient, httpost));
+            System.out.println(obj.getString("number"));
         } catch(Exception e) {
             e.printStackTrace();
         }
