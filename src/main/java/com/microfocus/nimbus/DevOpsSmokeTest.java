@@ -1,29 +1,28 @@
 package com.microfocus.nimbus;
 
-import java.io.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
+import com.google.gson.Gson;
+import org.apache.http.auth.*;
+import org.apache.http.client.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.*;
 import org.junit.BeforeClass;
-
 import org.junit.Test;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import static org.junit.Assert.fail;
 
 
 /**
  * @author Crunchify
  *
  */
-
-
 
 public class DevOpsSmokeTest{
 
@@ -68,25 +67,34 @@ public class DevOpsSmokeTest{
     @Test
     public void DevOpsSmokeTest() {
         try {
-            URL url = new URL ("http://nimbusserver.aos.com:8090/job/AOS_Web_Root_Module_Pipeline/build"); // Jenkins URL nimbusserver.aos.com:80900, job named 'nimbus-smoke-test'
-            String user = "developer"; // username
-            String pass = "developer"; // password or API token
-            String authStr = user +":"+  pass;
-            String encoding = DatatypeConverter.printBase64Binary(authStr.getBytes("utf-8"));
+            DefaultHttpClient httpclient = new DefaultHttpClient();
+            String jenkinsUrl="http://nimbusserver.aos.com:8090/";
+            HttpGet httpGet;
+            httpGet = new HttpGet(jenkinsUrl + "crumbIssuer/api/json");
+            String crumbResponse = toString(httpclient, httpGet);
+            CrumbJson crumbJson = new Gson().fromJson(crumbResponse, CrumbJson.class);
 
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setDoOutput(true);
-//            connection.setRequestProperty("Authorization", "Basic " + encoding);
-            InputStream content = connection.getInputStream();
-            BufferedReader in   =
-                    new BufferedReader (new InputStreamReader (content));
-            String line;
-            while ((line = in.readLine()) != null) {
-                System.out.println(line);
-            }
+            URL url = new URL (jenkinsUrl + "job/AOS_Web_Root_Module_Pipeline/build"); // Jenkins URL nimbusserver.aos.com:80900, job named 'nimbus-smoke-test'
+
+            HttpPost httpost = new HttpPost(url.toString());
+            httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
+            toString(httpclient, httpost);
         } catch(Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // helper construct to deserialize crumb json into
+    public static class CrumbJson {
+        public String crumb;
+        public String crumbRequestField;
+    }
+
+    private static String toString(DefaultHttpClient client,
+                                   HttpRequestBase request) throws Exception {
+        ResponseHandler<String> responseHandler = new BasicResponseHandler();
+        String responseBody = client.execute(request, responseHandler);
+        System.out.println(responseBody + "\n");
+        return responseBody;
     }
 }
