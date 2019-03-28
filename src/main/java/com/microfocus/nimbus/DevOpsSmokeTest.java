@@ -80,7 +80,7 @@ public class DevOpsSmokeTest{
 
             url = new URL (jenkinsUrl + "build");
 
-            HttpPost httpost = new HttpPost(url.toString());
+            httpost = new HttpPost(url.toString());
             httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
             toString(httpclient, httpost);
 
