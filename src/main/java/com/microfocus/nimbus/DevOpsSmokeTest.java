@@ -68,20 +68,33 @@ public class DevOpsSmokeTest{
     public void DevOpsSmokeTest() {
         try {
             DefaultHttpClient httpclient = new DefaultHttpClient();
-            String jenkinsUrl="http://nimbusserver.aos.com:8090/";
+            String jenkinsUrl = "http://nimbusserver.aos.com:8090/";
+            String jobUrl = jenkinsUrl + "job/AOS_Web_Root_Module_Pipeline/";
+
             HttpGet httpGet;
+            URL url;
+            HttpPost httpost;
             httpGet = new HttpGet(jenkinsUrl + "crumbIssuer/api/json");
             String crumbResponse = toString(httpclient, httpGet);
             CrumbJson crumbJson = new Gson().fromJson(crumbResponse, CrumbJson.class);
 
-            URL url = new URL (jenkinsUrl + "job/AOS_Web_Root_Module_Pipeline/build"); // Jenkins URL nimbusserver.aos.com:80900, job named 'nimbus-smoke-test'
+            url = new URL (jenkinsUrl + "build");
 
             HttpPost httpost = new HttpPost(url.toString());
             httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
             toString(httpclient, httpost);
+
+            url = new URL (jenkinsUrl + "lastBuild/api/json");
+
+            httpost = new HttpPost(url.toString());
+            httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
+            toString(httpclient, httpost);
+
+
         } catch(Exception e) {
             e.printStackTrace();
         }
+
     }
 
     // helper construct to deserialize crumb json into
