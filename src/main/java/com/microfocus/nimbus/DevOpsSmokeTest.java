@@ -94,10 +94,8 @@ public class DevOpsSmokeTest{
             httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
             toString(httpclient, httpost);
 
-
-
             JSONObject obj = new JSONObject(toString(httpclient, httpost));
-            System.out.println(obj.getString("number"));
+            System.out.println(Integer.toString(obj.getInt("number")));
         } catch(Exception e) {
             e.printStackTrace();
         }
