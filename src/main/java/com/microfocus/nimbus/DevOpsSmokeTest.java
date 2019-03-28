@@ -18,6 +18,8 @@ import java.net.URL;
 
 import static org.junit.Assert.fail;
 
+import java.util.concurrent.TimeUnit;
+
 
 /**
  * @author Crunchify
@@ -83,6 +85,8 @@ public class DevOpsSmokeTest{
             httpost = new HttpPost(url.toString());
             httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
             toString(httpclient, httpost);
+
+            TimeUnit.SECONDS.sleep(5);
 
             url = new URL (jobUrl + "lastBuild/api/json");
 
