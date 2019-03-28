@@ -26,7 +26,7 @@ import static org.junit.Assert.fail;
 
 public class DevOpsSmokeTest{
 
-    @BeforeClass
+//    @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         String s = null;
         String dockerCommand[] = new String[4];
