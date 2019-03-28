@@ -96,6 +96,7 @@ public class DevOpsSmokeTest{
             String buildNumber = Integer.toString(obj.getInt("number"));
 
             url = new URL (jobUrl + buildNumber + "/wfapi");
+            System.out.println("Contacting " + url.toString());
             httpost = new HttpPost(url.toString());
             httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
             obj = new JSONObject(toString(httpclient, httpost));
