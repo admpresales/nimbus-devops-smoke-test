@@ -8,6 +8,9 @@ import org.apache.http.impl.client.*;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.Rule;
+import org.junit.rules.*;
+import org.junit.runner.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,11 +23,19 @@ import org.json.*;
 
 
 /**
- * @author Crunchify
+ * @author Jason Hrabi
  *
  */
 
+
 public class DevOpsSmokeTest{
+
+    @Rule
+    public TestRule watcher = new TestWatcher() {
+        protected void starting(Description description) {
+            System.out.println("Starting test: " + description.getMethodName());
+        }
+    };
 
 //    @BeforeClass
     public static void setUpBeforeClass() throws Exception {
