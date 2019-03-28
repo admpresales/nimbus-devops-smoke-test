@@ -33,7 +33,7 @@ public class DevOpsSmokeTest{
         String dockerCommand[] = new String[4];
         dockerCommand[0] = "nimbusapp devops:1.1.7.0 -s DEVOPS_TAG=latest up";
         dockerCommand[1] = "nimbusapp intellij:1.1.7.0 -s INTELLIJ_TAG=1.1.7.1 up --force-recreate";
-        dockerCommand[2] = "nimbusapp octane:12.60.35.186 -s OCTANE_TAG=latest up";
+        dockerCommand[2] = "nimbusapp octane:12.60.35.186 up";
         dockerCommand[3] = "nimbusapp aos:1.1.7 up";
 
         Process p;
