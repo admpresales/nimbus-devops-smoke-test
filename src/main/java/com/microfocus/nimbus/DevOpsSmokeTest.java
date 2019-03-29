@@ -88,6 +88,43 @@ public class DevOpsSmokeTest{
 
         } catch(Exception e) {
             e.printStackTrace();
+            fail();
+        }
+
+    }
+
+    @Test
+    public void AOSDAWebRootSmokeTest() {
+        try {
+            HttpClient httpclient = HttpClientBuilder.create().build();
+            URL jenkinsUrl = new URL("http://nimbusserver.aos.com:8090/");
+            String buildStatus;
+
+            buildStatus = executeJenkinsPipeline(jenkinsUrl,"AOS_Android_Core_Pipeline");
+
+            Assert.assertEquals("SUCCESS", buildStatus);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+
+    }
+
+    @Test
+    public void AOSAndroidMCSmokeTest() {
+        try {
+            HttpClient httpclient = HttpClientBuilder.create().build();
+            URL jenkinsUrl = new URL("http://nimbusserver.aos.com:8090/");
+            String buildStatus;
+
+            buildStatus = executeJenkinsPipeline(jenkinsUrl,"aos-web-da-root-dev-pipeline");
+
+            Assert.assertEquals("SUCCESS", buildStatus);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            fail();
         }
 
     }
