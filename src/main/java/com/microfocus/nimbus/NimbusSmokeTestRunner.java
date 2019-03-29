@@ -12,7 +12,7 @@ public class NimbusSmokeTestRunner {
             System.out.println(failure.toString());
         }
         if (result.wasSuccessful()) {
-            System.out.println("Both Tests finished successfully...");
+            System.out.println("Test run complete");
         }
     }
 

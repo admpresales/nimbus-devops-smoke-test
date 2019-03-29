@@ -80,93 +80,9 @@ public class DevOpsSmokeTest{
         try {
             HttpClient httpclient = HttpClientBuilder.create().build();
             URL jenkinsUrl = new URL("http://nimbusserver.aos.com:8090/");
-            URL jobUrl = new URL(jenkinsUrl + "job/AOS_Web_Root_Module_Pipeline/");
-            HttpGet httpGet;
-            URL url;
-            HttpPost httpost;
-            JSONObject obj;
-            String buildStatus = "IN_PROGRESS";
+            String buildStatus;
 
-            CrumbJson crumbJson = getCrumb (jenkinsUrl);
-
-            url = new URL (jobUrl + "build?delay=0sec");
-            httpost = new HttpPost(url.toString());
-            httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
-            toString(httpclient, httpost);
-
-            TimeUnit.SECONDS.sleep(5);
-
-            url = new URL (jobUrl + "lastBuild/api/json");
-            httpost = new HttpPost(url.toString());
-            httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
-            obj = new JSONObject(toString(httpclient, httpost));
-            String buildNumber = Integer.toString(obj.getInt("number"));
-
-            url = new URL (jobUrl + buildNumber + "/wfapi/");
-            System.out.println("Contacting " + url.toString());
-            httpost = new HttpPost(url.toString());
-            httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
-            obj = new JSONObject(toString(httpclient, httpost));
-            buildStatus = obj.getString("status");
-
-            System.out.println("Build Status: " + buildStatus);
-
-            while (buildStatus.equals("IN_PROGRESS")) {
-                TimeUnit.SECONDS.sleep(30);
-                System.out.println("Pipeline is still running.");
-                obj = new JSONObject(toString(httpclient, httpost));
-                buildStatus = obj.getString("status");
-            }
-
-            Assert.assertEquals("SUCCESS", buildStatus);
-
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void DAAOSWebRootPipelineTest() {
-        try {
-            HttpClient httpclient = HttpClientBuilder.create().build();
-            URL jenkinsUrl = new URL("http://nimbusserver.aos.com:8090/");
-            URL jobUrl = new URL(jenkinsUrl + "job/aos-web-da-root-dev-pipeline/");
-            HttpGet httpGet;
-            URL url;
-            HttpPost httpost;
-            JSONObject obj;
-            String buildStatus = "IN_PROGRESS";
-
-            CrumbJson crumbJson = getCrumb (jenkinsUrl);
-
-            url = new URL (jobUrl + "build?delay=0sec");
-            httpost = new HttpPost(url.toString());
-            httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
-            toString(httpclient, httpost);
-
-            TimeUnit.SECONDS.sleep(5);
-
-            url = new URL (jobUrl + "lastBuild/api/json");
-            httpost = new HttpPost(url.toString());
-            httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
-            obj = new JSONObject(toString(httpclient, httpost));
-            String buildNumber = Integer.toString(obj.getInt("number"));
-
-            url = new URL (jobUrl + buildNumber + "/wfapi/");
-            System.out.println("Contacting " + url.toString());
-            httpost = new HttpPost(url.toString());
-            httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
-            obj = new JSONObject(toString(httpclient, httpost));
-            buildStatus = obj.getString("status");
-
-            System.out.println("Build Status: " + buildStatus);
-
-            while (buildStatus.equals("IN_PROGRESS")) {
-                TimeUnit.SECONDS.sleep(30);
-                System.out.println("Pipeline is still running.");
-                obj = new JSONObject(toString(httpclient, httpost));
-                buildStatus = obj.getString("status");
-            }
+            buildStatus = executeJenkinsPipeline(jenkinsUrl,"AOS_Web_Root_Module_Pipeline");
 
             Assert.assertEquals("SUCCESS", buildStatus);
 
@@ -182,7 +98,7 @@ public class DevOpsSmokeTest{
         public String crumbRequestField;
     }
 
-    private static String toString(HttpClient client,
+    private static String executeRequest(HttpClient client,
                                    HttpRequestBase request) throws Exception {
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
         String responseBody = client.execute(request, responseHandler);
@@ -192,8 +108,53 @@ public class DevOpsSmokeTest{
     private static CrumbJson getCrumb(URL url) throws Exception {
         HttpClient httpclient = HttpClientBuilder.create().build();
         HttpGet httpGet = new HttpGet(url + "crumbIssuer/api/json");
-        String crumbResponse = toString(httpclient, httpGet);
+        String crumbResponse = executeRequest(httpclient, httpGet);
         CrumbJson crumbJson = new Gson().fromJson(crumbResponse, CrumbJson.class);
         return crumbJson;
+    }
+
+    private static String executeJenkinsPipeline(URL jenkinsUrl, String pipelineName) throws Exception
+    {
+        URL jobUrl = new URL(jenkinsUrl + "/job/" + pipelineName + "/");
+        HttpClient httpclient = HttpClientBuilder.create().build();
+        HttpGet httpGet;
+        URL url;
+        HttpPost httpost;
+        JSONObject obj;
+        String buildStatus = "IN_PROGRESS";
+
+        CrumbJson crumbJson = getCrumb (jenkinsUrl);
+
+        url = new URL (jobUrl + "build?delay=0sec");
+        httpost = new HttpPost(url.toString());
+        httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
+        executeRequest(httpclient, httpost);
+
+        TimeUnit.SECONDS.sleep(5);
+
+        url = new URL (jobUrl + "lastBuild/api/json");
+        httpost = new HttpPost(url.toString());
+        httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
+        obj = new JSONObject(executeRequest(httpclient, httpost));
+        String buildNumber = Integer.toString(obj.getInt("number"));
+
+        url = new URL (jobUrl + buildNumber + "/wfapi/");
+        System.out.println("Contacting " + url.toString());
+        httpost = new HttpPost(url.toString());
+        httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
+        obj = new JSONObject(executeRequest(httpclient, httpost));
+        buildStatus = obj.getString("status");
+
+        System.out.println("Build Status: " + buildStatus);
+
+        while (buildStatus.equals("IN_PROGRESS")) {
+            TimeUnit.SECONDS.sleep(30);
+            System.out.println("Pipeline is still running.");
+            obj = new JSONObject(executeRequest(httpclient, httpost));
+            buildStatus = obj.getString("status");
+        }
+
+        return buildStatus;
+
     }
 }
