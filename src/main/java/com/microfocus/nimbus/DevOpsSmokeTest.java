@@ -100,7 +100,7 @@ public class DevOpsSmokeTest{
             URL jenkinsUrl = new URL("http://nimbusserver.aos.com:8090/");
             String buildStatus;
 
-            buildStatus = executeJenkinsPipeline(jenkinsUrl,"AOS_Android_Core_Pipeline");
+            buildStatus = executeJenkinsPipeline(jenkinsUrl,"aos-web-da-root-dev-pipeline");
 
             Assert.assertEquals("SUCCESS", buildStatus);
 
@@ -118,7 +118,7 @@ public class DevOpsSmokeTest{
             URL jenkinsUrl = new URL("http://nimbusserver.aos.com:8090/");
             String buildStatus;
 
-            buildStatus = executeJenkinsPipeline(jenkinsUrl,"aos-web-da-root-dev-pipeline");
+            buildStatus = executeJenkinsPipeline(jenkinsUrl,"AOS_Android_Core_Pipeline");
 
             Assert.assertEquals("SUCCESS", buildStatus);
 
@@ -181,8 +181,6 @@ public class DevOpsSmokeTest{
         httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
         obj = new JSONObject(executeRequest(httpclient, httpost));
         buildStatus = obj.getString("status");
-
-        System.out.println("Build Status: " + buildStatus);
 
         while (buildStatus.equals("IN_PROGRESS")) {
             TimeUnit.SECONDS.sleep(30);
