@@ -131,6 +131,7 @@ public class DevOpsSmokeTest{
 
     // helper construct to deserialize crumb json into
     public static class CrumbJson {
+        public String _class;
         public String crumb;
         public String crumbRequestField;
     }
