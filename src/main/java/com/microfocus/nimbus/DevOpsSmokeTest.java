@@ -163,6 +163,8 @@ public class DevOpsSmokeTest{
 
         CrumbJson crumbJson = getCrumb (jenkinsUrl);
 
+        System.out.println(crumbJson.crumb);
+
         url = new URL (jobUrl + "build?delay=0sec");
         httpost = new HttpPost(url.toString());
         httpost.addHeader(crumbJson.crumbRequestField, crumbJson.crumb);
