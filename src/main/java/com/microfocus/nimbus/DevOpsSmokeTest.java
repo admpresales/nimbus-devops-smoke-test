@@ -41,10 +41,10 @@ public class DevOpsSmokeTest{
     public static void setUpBeforeClass() throws Exception {
         String s = null;
         String[] dockerCommand = new String[4];
-        dockerCommand[0] = "nimbusapp devops:1.1.7.0 -s DEVOPS_TAG=latest up";
-        dockerCommand[1] = "nimbusapp intellij:1.1.7.0 -s INTELLIJ_TAG=1.1.7.1 up";
-        dockerCommand[2] = "nimbusapp octane:12.60.35.186 up";
-        dockerCommand[3] = "nimbusapp aos:1.1.7 up";
+        dockerCommand[0] = "nimbusapp devops:3.2.0 -s DEVOPS_TAG=latest up";
+        dockerCommand[1] = "nimbusapp intellij:3.2.1 -s INTELLIJ_TAG=3.2.1 up";
+        dockerCommand[2] = "nimbusapp octane:16.0.300.70 up";
+        dockerCommand[3] = "nimbusapp aos:2.3 up";
 
         Process p;
         BufferedReader stdInput;
